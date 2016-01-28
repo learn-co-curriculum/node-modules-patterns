@@ -230,8 +230,8 @@ You've learned the most common patterns and their differences. From them you can
 ## Resources
 
 1. [Export This: Interface Design Patterns for Node.js Modules](http://bites.goodeggs.com/posts/export-this)
-1. []()
-1. []()
+1. [Node.js Module Patterns](https://darrenderidder.github.io/talks/ModulePatterns)
+1. [Pseudo-Classical Pattern](http://javascript.info/tutorial/pseudo-classical-pattern)
 
 
 ---
