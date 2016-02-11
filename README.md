@@ -81,7 +81,7 @@ module.exports = function(env) {
   env = env || process.env.NODE_ENV
 ```
 
-Then we define two conditions and return different configurations accordingly (in this example only API keys are differentt):
+Then we define two conditions and return different configurations accordingly (in this example only API keys are different):
 
 ```js  
   if (env == 'production') {
@@ -184,7 +184,9 @@ exports.sayHelloInJapanese = function() {
 }
 ```
 
-That's great! What if we want to assign the whole object like we did with the configuration module?     Obviously the code with `module.exports` works because we used it in the previous section:
+That's great! What if we want to assign the whole object like we did with the configuration module?
+
+Obviously the code with `module.exports` works because we used it in the previous section:
 
 ```js
 module.exports = function(env) {
@@ -217,7 +219,7 @@ exports = function(env) {
 Go ahead and try to run it (`environment-exports.js`) with this one-liner command:
 
 ```
-$ node -e "console.log(require('./environment-exports')().apiKey)"
+node -e "console.log(require('./environment-exports')().apiKey)"
 ```
 
 If you're getting `TypeError: require(...) is not a function` then that's because we cannot re-assign exports just by itself. We need to use `module.exports =...` if we want to reassign the entire module. 
