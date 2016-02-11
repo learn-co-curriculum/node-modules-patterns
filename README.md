@@ -58,8 +58,7 @@ URL is http://webapplog.com
 We achieved modularity! Now we can have many other files like `program.js` or `app.js` which can import the `config.js` file and access the same values. If we ever need to change `port` or `apiKey`, then it's effortless. We just update `configs.js`. No need to search in all files and risk bugs by missing a few.
 
 However, there's a limitation to this approach. Let's say we need to have three sets of API keys: one for development, one for testing and one for production. You can write `if/else` conditions in `main.js` but then you end up repeating the same logic over and over in other files which need to use the configurations. 
-
-Not so great approach (`main-envirionment-bad.js`), because we end up with a lot of logic which really belongs to the configuration module spread out across various main files (files which import the module):
+This approach isn't great because we end up with a lot of logic which really belongs to the configuration module spread out across various main files (files which import the module). Take a look at the code below (also in `main-envirionment-bad.js`):
 
 ```js
 if (process.env.NODE_ENV == 'production') {
