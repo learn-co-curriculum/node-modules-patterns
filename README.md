@@ -81,7 +81,7 @@ module.exports = function(env) {
   env = env || process.env.NODE_ENV
 ```
 
-The we process two conditions and return different configurations accordingly (in this example only API key differ):
+Then we define two conditions and return different configurations accordingly (in this example only API keys are differentt):
 
 ```js  
   if (env == 'production') {
@@ -109,7 +109,7 @@ The we process two conditions and return different configurations accordingly (i
 }
 ```
 
-The `main-environment.js` file can pass the argument or not, but it need to invoke the imported configs method:
+The `main-environment.js` file can pass the argument or not, but it needs to invoke the imported configs method:
 
 ```js
 var configsInit = require('./environment')
