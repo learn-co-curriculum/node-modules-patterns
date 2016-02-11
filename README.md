@@ -14,9 +14,9 @@ This lesson will cover the most common patterns used to create and export a Node
 
 ## Exporting a Module
 
-Module allow developers to build better systems because the code can be separated into different files which are groups into packages or modules. You can write your own module or use a module from an open-source community (some one else created it and made the code available to others free of charge). 
+Modules allow developers to build better systems because the code can be separated into different files which are grouped into packages or modules. You can write your own module or use a module from an open-source community. 
 
-Imagine a scenario where you have an application with 2,000 lines of code. All code is in one file. That's a nightmare because to navigate around in such a file and also different developers will have to be very careful when they collaborate not to introduce conflicts in their changes! What if you split the logic into 20 files which each file having 100 lines of code roughly. Much better right? So how do you write a module in Node.
+Imagine a scenario where you have an application with 2,000 lines of code. All the code is in one file. That's a nightmare to navigate around and also difficult for different developers to collaborate without merge conflicts! What if you split the logic into 20 files which each file having 100 lines of code roughly. Much better right? So what's the best way to do that?
 
 You can one of the following patterns:
 
