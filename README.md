@@ -42,20 +42,20 @@ module.exports = {
 }
 ```
 
-In the `main.js` file (file which uses the module), we can import the module and use any settings by accessing the property by the name such as `url` or `name` (`.js` extension is optional):
+In the `main.js` file (which uses the module), we can import the module and use any settings by accessing the property by the name such as `url` or `name` (`.js` extension is optional):
 
 ```js
 var configs = require('./configs')
 console.log('URL is %s', configs.url)
 ```
 
-The result of running `$ node main` will be the printed URL with the value supplied by the `configs.js`:
+The result of running `node main` will be the printed URL with the value supplied by the `configs.js`:
 
 ```
 URL is http://webapplog.com
 ```
 
-We achieved modularity. Now we can have many other files like `program.js` or `app.js` which can import the `config.js` file and access the same values. If we ever need to change `port` or `apiKey`, then it's effortless—just update `configs.js`. No need to search in all files.
+We achieved modularity! Now we can have many other files like `program.js` or `app.js` which can import the `config.js` file and access the same values. If we ever need to change `port` or `apiKey`, then it's effortless. We just update `configs.js`. No need to search in all files and risk bugs by missing a few.
 
 However, there's a limitation to this approach. Let's say we need to have three sets of API keys: one for development, one for testing and one for production. You can write `if/else` conditions in `main.js` but then you end up repeating the same logic over and over in other files which need to use the configurations. 
 
