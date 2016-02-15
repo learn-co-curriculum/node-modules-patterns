@@ -120,7 +120,7 @@ console.log('API key is %s', configs.apiKey)
 The resulting module and main file will produce be able to switch between different settings according to the environment variable:
 
 ```
- $ node main-environment
+$ node main-environment
 URL is http://webapplog.com
 API key is D1FCFE58-575F-40FF-AF36-0CBD6A367756
 $ NODE_ENV=production node main-environment
