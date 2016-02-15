@@ -50,7 +50,7 @@ This approach isn't great because we end up with a lot of logic which really bel
 ```js
 if (process.env.NODE_ENV == 'production') {
   var configs = require('./configs-production')
-} else if (process.env.NODE_ENV == 'testing) {
+} else if (process.env.NODE_ENV == 'testing') {
   var configs = require('./configs-testing')
 } else { // Assume development
   var configs = require('./configs')
