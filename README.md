@@ -2,6 +2,10 @@
 
 ## Overview
 
+Imagine a scenario where you have an application with 2,000 lines of code. All the code is in one file. That's a nightmare to navigate around and also difficult for different developers to collaborate without merge conflicts! What if you split the logic into 20 files which each file having 100 lines of code roughly. Much better right? So what's the best way to do that? The answer is modules!
+
+Modules allow developers to build better systems because the code can be separated into different files which are grouped into packages or modules. You can write your own module or use a module from an open-source community. 
+
 This lesson will cover the most common patterns used to create and export a Node module.
 
 ## Objectives
@@ -12,24 +16,7 @@ This lesson will cover the most common patterns used to create and export a Node
 1. Describe exports.method = function(){}
 1. Describe exports.object = {}
 
-## Exporting a Module
-
-Modules allow developers to build better systems because the code can be separated into different files which are grouped into packages or modules. You can write your own module or use a module from an open-source community. 
-
-Imagine a scenario where you have an application with 2,000 lines of code. All the code is in one file. That's a nightmare to navigate around and also difficult for different developers to collaborate without merge conflicts! What if you split the logic into 20 files which each file having 100 lines of code roughly. Much better right? So what's the best way to do that?
-
-You can one of the following patterns:
-
-1. `module.exports= {...}`
-1. `module.exports=function() {...}`
-1. `exports.method = function() {...}`
-1. `exports.object = {...}`
-
-2 and 3 can also be use for classes (factory function or functional inheritance pattern). We won't discuss classes in great detail since it's more of general JavaScript topic and not exclusive to Node. 
-
-Right now let's cover the difference between assigning an object and a method.
-
-## Exporting Objects vs. Methods
+## Exporting Objects
 
 Consider an example where we have a configuration file with some settings (`configs.js`):
 
@@ -72,7 +59,11 @@ if (process.env.NODE_ENV == 'production') {
 console.log('URL is %s', configs.url)
 ```
 
-If you are thinking we should move the logic to the `config.js` file, the you are right. But how do we go about it if it's just an object? We need to use the `module.exports = function() {}` pattern which is more versatile. It allows us to execute some logic and even use parameters from the function's arguments. 
+If you are thinking we should move the logic to the `config.js` file, the you are right. But how do we go about it if it's just an object? 
+
+## Exporting Functions
+
+We need to use the `module.exports = function() {}` pattern which is more versatile. It allows us to execute some logic and even use parameters from the function's arguments. 
 
 With the function pattern, we can re-write our configuration module to be smarter and more dynamic. First, we get the environment or use the one from the environment variable `NODE_ENV` if the argument is not set:
 
@@ -184,9 +175,9 @@ exports.sayHelloInJapanese = function() {
 }
 ```
 
-That's great! What if we want to assign the whole object like we did with the configuration module?
+That's great! In this case `exports` and `module.exports` are the same. What if we want to assign the whole object like we did with the configuration module to the `exports` object?
 
-Obviously the code with `module.exports` works because we used it in the previous section:
+So this is the working code with `module.exports`. Obviously the code with `module.exports` works, because we used it in the previous section:
 
 ```js
 module.exports = function(env) {
@@ -222,11 +213,73 @@ Go ahead and try to run it (`environment-exports.js`) with this one-liner comman
 node -e "console.log(require('./environment-exports')().apiKey)"
 ```
 
-If you're getting `TypeError: require(...) is not a function` then that's because we cannot re-assign exports just by itself. We need to use `module.exports =...` if we want to reassign the entire module. 
+If you're getting `TypeError: require(...) is not a function`, that's right.
 
-When to use `module.exports = ...` vs. `exports.name = ...` or `module.exports.name = ...`? Node developers tend to use the former when you have a large class which take the whole file and the latter when you have a set of individual methods or objects. A good example will be an Express.js library which uses the former style and a collection of some utilities which are categorically the same but have distinct functionalities. 
+Another example include this refactoring:
+
+You can even refactor you code as this (working code):
+
+```js
+module.exports = {
+  sayHelloInEnglish: function() {
+    return 'Hello'
+  },
+  sayHelloInTatar: function() {
+    return 'Isänmesez'
+  },
+  sayHelloInSpanish: function() {
+    return 'Hola'
+  },
+  sayHelloInJapanese: function() {
+    return 'こんにちは' // Kon'nichiwa
+  }
+}
+```
+
+Into this broken code:
+
+```js
+exports = {
+  sayHelloInEnglish: function() {
+    return 'Hello'
+  },
+  sayHelloInTatar: function() {
+    return 'Isänmesez'
+  },
+  sayHelloInSpanish: function() {
+    return 'Hola'
+  },
+  sayHelloInJapanese: function() {
+    return 'こんにちは' // Kon'nichiwa
+  }
+}
+```
+
+So what's happening with `exports =...`? It won't work as expected, because we cannot assign exports to something. We lose the reference. 
+
+We need to use `module.exports =...` if we want to assign the entire module, i.e., if we want to have the logic as the result of `require()` and not as the result of `require().NAME`.
+
+When to use `module.exports = ...` vs. `exports.name = ...` or `module.exports.name = ...`? In other words, when do you want to use `var name = require('name')` and when `var nameB = require('nameA').nameB`?
+
+Node developers tend to use the former when they have a large class which take the whole file. They use the latter when they have a set of individual methods or objects. A good example will be an Express.js library which uses the former style and a collection of some utilities which are categorically the same but have distinct functionalities. 
+
+An example of the latter is `chai` which has `except` property: `var expect = require('chai').expect`.
 
 You've learned the most common patterns and their differences. From them you can create more advanced implementation of modules which export constructor (psedu-classical inheritance) a higher-order function (function which returns a function), or monkey patch or use globals. Follow the links in the resources to learn more about them.
+
+## Module Patterns at a Glance
+
+You can utilize one of the following patterns to export the logic:
+
+1. `module.exports= {...}`: Exporting an object
+1. `module.exports=function() {...}`: Exporting a function
+1. `exports.method = function() {...}` same as `module.exports.method = function() {...}` 
+1. `exports.object = {...}` same as `module.exports.object = {...}`
+
+2 and 3 can also be use for classes (factory function or functional inheritance pattern). We won't discuss classes in great detail since it's more of general JavaScript topic and not exclusive to Node. 
+
+Right now let's cover the difference between assigning an object and a method.
+
 
 ## Resources
 
