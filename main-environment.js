@@ -1,3 +1,3 @@
 var configs = require('./environment')()
-console.log('URL is %s', configs.url)
-console.log('API key is %s', configs.apiKey)
+console.log('URL is ' + configs.url)
+console.log('API key is ' +  configs.apiKey)

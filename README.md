@@ -33,7 +33,7 @@ In the `main.js` file (which uses the module), we can import the module and use 
 
 ```js
 var configs = require('./configs')
-console.log('URL is %s', configs.url)
+console.log('URL is ' + configs.url)
 ```
 
 The result of running `node main` will be the printed URL with the value supplied by the `configs.js`:
@@ -56,7 +56,7 @@ if (process.env.NODE_ENV == 'production') {
   var configs = require('./configs')
 }
 
-console.log('URL is %s', configs.url)
+console.log('URL is ' + configs.url)
 ```
 
 If you are thinking we should move the logic to the `config.js` file, the you are right. But how do we go about it if it's just an object? 
@@ -74,7 +74,7 @@ module.exports = function(env) {
 
 Then we define two conditions and return different configurations accordingly (in this example only API keys are different):
 
-```js  
+```js
   if (env == 'production') {
     return {
       url: 'http://webapplog.com',
@@ -105,16 +105,16 @@ The `main-environment.js` file can pass the argument or not, but it needs to inv
 ```js
 var configsInit = require('./environment')
 configs = configsInit('your-awesome-environment')
-console.log('URL is %s', configs.url)
-console.log('API key is %s', configs.apiKey)
+console.log('URL is ' + configs.url)
+console.log('API key is ' +  configs.apiKey)
 ```
 
 or you can merge 1st and 2nd lines into a single statement (more common style):
 
 ```js
 var configs = require('./environment')()
-console.log('URL is %s', configs.url)
-console.log('API key is %s', configs.apiKey)
+console.log('URL is ' +  configs.url)
+console.log('API key is ' +  configs.apiKey)
 ```
 
 The resulting module and main file will produce be able to switch between different settings according to the environment variable:
@@ -215,9 +215,9 @@ node -e "console.log(require('./environment-exports')().apiKey)"
 
 If you're getting `TypeError: require(...) is not a function`, that's right.
 
-Another example include this refactoring:
+Let's take another example of code to refactor. The code below works, but what happens if we just try to use `exports` instead of `module.exports`?
 
-You can even refactor you code as this (working code):
+With `module.exports`: 
 
 ```js
 module.exports = {
@@ -236,8 +236,7 @@ module.exports = {
 }
 ```
 
-Into this broken code:
-
+With just `exports`:
 ```js
 exports = {
   sayHelloInEnglish: function() {
@@ -255,13 +254,13 @@ exports = {
 }
 ```
 
-So what's happening with `exports =...`? It won't work as expected, because we cannot assign exports to something. We lose the reference. 
+So what's happening with just `exports =...`? It won't work as expected, because we cannot assign exports to something. We lose the reference. 
 
 We need to use `module.exports =...` if we want to assign the entire module, i.e., if we want to have the logic as the result of `require()` and not as the result of `require().NAME`.
 
 When to use `module.exports = ...` vs. `exports.name = ...` or `module.exports.name = ...`? In other words, when do you want to use `var name = require('name')` and when `var nameB = require('nameA').nameB`?
 
-Node developers tend to use the former when they have a large class which take the whole file. They use the latter when they have a set of individual methods or objects. A good example will be an Express.js library which uses the former style and a collection of some utilities which are categorically the same but have distinct functionalities. 
+Node developers tend to use the former when they have a large class which takes the whole file. They use the latter when they have a set of individual methods or objects. A good example will be an Express.js library which uses the former style and a collection of some utilities which are categorically the same but have distinct functionalities. 
 
 An example of the latter is `chai` which has `except` property: `var expect = require('chai').expect`.
 
@@ -275,10 +274,6 @@ You can utilize one of the following patterns to export the logic:
 1. `module.exports=function() {...}`: Exporting a function
 1. `exports.method = function() {...}` same as `module.exports.method = function() {...}` 
 1. `exports.object = {...}` same as `module.exports.object = {...}`
-
-2 and 3 can also be use for classes (factory function or functional inheritance pattern). We won't discuss classes in great detail since it's more of general JavaScript topic and not exclusive to Node. 
-
-Right now let's cover the difference between assigning an object and a method.
 
 
 ## Resources
