@@ -4,7 +4,7 @@
 
 Imagine a scenario where you have an application with 2,000 lines of code. All the code is in one file. That's a nightmare to navigate around and also difficult for different developers to collaborate without merge conflicts! What if you split the logic into 20 files which each file having 100 lines of code roughly. Much better right? So what's the best way to do that? The answer is modules!
 
-Modules allow developers to build better systems because the code can be separated into different files which are grouped into packages or modules. You can write your own module or use a module from an open-source community. 
+Modules allow developers to build better systems because the code can be separated into different files which are grouped into packages or modules. You can write your own module or use a module from an open-source community.
 
 This lesson will cover the most common patterns used to create and export a Node module.
 
@@ -44,7 +44,7 @@ URL is http://webapplog.com
 
 We achieved modularity! Now we can have many other files like `program.js` or `app.js` which can import the `config.js` file and access the same values. If we ever need to change `port` or `apiKey`, then it's effortless. We just update `configs.js`. No need to search in all files and risk bugs by missing a few.
 
-However, there's a limitation to this approach. Let's say we need to have three sets of API keys: one for development, one for testing and one for production. You can write `if/else` conditions in `main.js` but then you end up repeating the same logic over and over in other files which need to use the configurations. 
+However, there's a limitation to this approach. Let's say we need to have three sets of API keys: one for development, one for testing and one for production. You can write `if/else` conditions in `main.js` but then you end up repeating the same logic over and over in other files which need to use the configurations.
 This approach isn't great because we end up with a lot of logic which really belongs to the configuration module spread out across various main files (files which import the module). Take a look at the code below (also in `main-envirionment-bad.js`):
 
 ```js
@@ -59,15 +59,16 @@ if (process.env.NODE_ENV == 'production') {
 console.log('URL is ' + configs.url)
 ```
 
-If you are thinking we should move the logic to the `config.js` file, the you are right. But how do we go about it if it's just an object? 
+If you are thinking we should move the logic to the `config.js` file, the you are right. But how do we go about it if it's just an object?
 
 ## Exporting Functions
 
-We need to use the `module.exports = function() {}` pattern which is more versatile. It allows us to execute some logic and even use parameters from the function's arguments. 
+To make the module smarter (more dynamic), we need to use the `module.exports = function() {}` pattern which is more versatile. It allows us to execute some logic and even use parameters from the function's arguments.
 
-With the function pattern, we can re-write our configuration module to be smarter and more dynamic. First, we get the environment or use the one from the environment variable `NODE_ENV` if the argument is not set:
+With the function pattern, we can re-write our configuration module to do more things. In other words, the module will can behave differently because we can put some logic in its code. This is `environment.js` file. The first thing in it is getting the environment or using the one from the environment variable `NODE_ENV` if the argument is not set:
 
 ```js
+// environment.js
 module.exports = function(env) {
   env = env || process.env.NODE_ENV
 ```
@@ -100,9 +101,10 @@ Then we define two conditions and return different configurations accordingly (i
 }
 ```
 
-The `main-environment.js` file can pass the argument or not, but it needs to invoke the imported configs method:
+The `main-environment.js` file can pass the argument or not, but it needs to invoke the imported configs method (from `environment`):
 
 ```js
+// main-environment.js
 var configsInit = require('./environment')
 configs = configsInit('your-awesome-environment')
 console.log('URL is ' + configs.url)
@@ -132,7 +134,7 @@ API key is D2230FC4-7E2A-4003-9372-0BF80107558D
 ```
 
 To summarize the difference between objects and functions, the latter are more dynamic and allow for the so called initializer or constructor code, i.e., some code to tweak an object before exporting it.
- 
+
 ## module.exports and exports
 
 Simply put, `module.exports` is an alias to the `exports`. You can save your self a repetitive stress injury by using `exports`. Take a look at this module which uses `module.exports`:
@@ -192,7 +194,7 @@ module.exports = function(env) {
 }
 ```
 
-What about this code with `exports`? Will it work too? 
+What about this code with `exports`? Will it work too?
 
 ```js
 exports = function(env) {
@@ -213,11 +215,13 @@ Go ahead and try to run it (`environment-exports.js`) with this one-liner comman
 node -e "console.log(require('./environment-exports')().apiKey)"
 ```
 
-If you're getting `TypeError: require(...) is not a function`, that's right.
+If you're getting `TypeError: require(...) is not a function`, that's right. You are getting an error because now nothing has been exported. By writing `exports = ...`, we **lost** the original value of `exports`!
+
+Note: We lose the reference, because we overwrite the object `exports`. It's okay to overwrite `module.exports` because in this case `module.exports` is a property of the `module` object.
 
 Let's take another example of code to refactor. The code below works, but what happens if we just try to use `exports` instead of `module.exports`?
 
-With `module.exports`: 
+With `module.exports`:
 
 ```js
 module.exports = {
@@ -254,13 +258,13 @@ exports = {
 }
 ```
 
-So what's happening with just `exports =...`? It won't work as expected, because we cannot assign exports to something. We lose the reference. 
+So what's happening with just `exports =...`? It won't work as expected, because we cannot assign exports to something. We lose the reference.
 
-We need to use `module.exports =...` if we want to assign the entire module, i.e., if we want to have the logic as the result of `require()` and not as the result of `require().NAME`.
+We need to use `module.exports =...` if we want to assign the entire module, i.e., if we want to have the logic as the result of `require()` and not as the result of `require().NAME` where `NAME` is some arbitrary name (e.g, `configs`, `users`).
 
-When to use `module.exports = ...` vs. `exports.name = ...` or `module.exports.name = ...`? In other words, when do you want to use `var name = require('name')` and when `var nameB = require('nameA').nameB`?
+Typicall, Node developers have one `module.exports = ...` in a file or many `exports.NAME =...`. When to use `module.exports = ...` vs. `exports.name = ...` or `module.exports.name = ...`? In other words, when do you want to use `var name = require('name')` and when `var nameB = require('nameA').nameB`?
 
-Node developers tend to use the former when they have a large class which takes the whole file. They use the latter when they have a set of individual methods or objects. A good example will be an Express.js library which uses the former style and a collection of some utilities which are categorically the same but have distinct functionalities. 
+Node developers tend to use the `module.exports = ...` when they have a large class which takes the whole file. They use the `exports.NAME = ...` when they have a set of individual methods or objects. A good example of the former approach is the Express.js library. An example of the latter is a collection of some utilities which are categorically the same, but have distinct functionalities which don't need to communicate with one another.
 
 An example of the latter is `chai` which has `except` property: `var expect = require('chai').expect`.
 
@@ -272,7 +276,7 @@ You can utilize one of the following patterns to export the logic:
 
 1. `module.exports= {...}`: Exporting an object
 1. `module.exports=function() {...}`: Exporting a function
-1. `exports.method = function() {...}` same as `module.exports.method = function() {...}` 
+1. `exports.method = function() {...}` same as `module.exports.method = function() {...}`
 1. `exports.object = {...}` same as `module.exports.object = {...}`
 
 
